@@ -1,0 +1,15 @@
+name: "LightAntiCheat"
+main: radondev\lac\Loader
+api: 3.0.0
+version: "0.1.0-dev"
+authors: ["radondev"]
+website: "https://github.com/radondev/LightAntiCheat"
+description: "TODO"
+permissions:
+  lac:
+    default: op
+    description: "Allows: every functionality"
+    children:
+      lac.command:
+        default: true
+        description: "Allows: use the LAC command and its functionality"
