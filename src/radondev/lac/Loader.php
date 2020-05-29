@@ -13,6 +13,26 @@ class Loader extends PluginBase
      * @var Loader
      */
     private static $instance;
+    /**
+     * @var LightAntiCheat
+     */
+    private $lightAntiCheat;
+
+    public function onLoad()
+    {
+        self::$instance = $this;
+    }
+
+    public function onEnable()
+    {
+        $this->lightAntiCheat = new LightAntiCheat(
+            $this->getServer()->getLoader(), $this->getServer()->getLogger()
+        );
+
+        $this->getServer()->getCommandMap()->registerAll("lightanticheat", [
+            new LACCommand($this->getDescription()->getAuthors(), $this->getDescription()->getVersion())
+        ]);
+    }
 
     /**
      * @return Loader
@@ -22,15 +42,11 @@ class Loader extends PluginBase
         return self::$instance;
     }
 
-    public function onLoad()
+    /**
+     * @return LightAntiCheat
+     */
+    public function getLightAntiCheat(): LightAntiCheat
     {
-        self::$instance = $this;
-    }
-
-    public function onEnable()
-    {
-        $this->getServer()->getCommandMap()->registerAll("lightanticheat", [
-            new LACCommand($this->getDescription()->getAuthors(), $this->getDescription()->getVersion())
-        ]);
+        return $this->lightAntiCheat;
     }
 }
