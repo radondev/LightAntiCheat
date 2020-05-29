@@ -50,24 +50,6 @@ class LACCommand extends Command implements PluginIdentifiableCommand
                 $this->plainAuthors
             ])
         );
-        $sender->sendMessage(
-            MessageBuilder::debug("LightAntiCheat v%s made by %s", [
-                $this->version,
-                $this->plainAuthors
-            ])
-        );
-        $sender->sendMessage(
-            MessageBuilder::success("LightAntiCheat v%s made by %s", [
-                $this->version,
-                $this->plainAuthors
-            ])
-        );
-        $sender->sendMessage(
-            MessageBuilder::error("LightAntiCheat v%s made by %s", [
-                $this->version,
-                $this->plainAuthors
-            ])
-        );
         return true;
     }
 
