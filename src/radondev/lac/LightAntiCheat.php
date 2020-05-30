@@ -12,7 +12,7 @@ use ThreadedLogger;
 
 class LightAntiCheat extends Thread
 {
-    public const THREAD_SLEEP = 1.01;
+    public const THREAD_TICK_SPEED = 0.01;
 
     /**
      * @var ThreadedLogger
@@ -55,11 +55,62 @@ class LightAntiCheat extends Thread
             $start = microtime(true);
 
             // processing
+            $this->tick();
 
             $end = microtime(true);
-            if (($deltaT = $end - $start) < self::THREAD_SLEEP) {
-                @time_sleep_until($end + self::THREAD_SLEEP - $deltaT);
+            if (($deltaT = $end - $start) < self::THREAD_TICK_SPEED) {
+                @time_sleep_until($end + self::THREAD_TICK_SPEED - $deltaT);
             }
+        }
+    }
+
+    private function tick(): void
+    {
+        $packets = $this->readPackets();
+
+        $out = $this->processPackets($packets);
+
+        $this->pushPackets($out);
+    }
+
+    /**
+     * @return ExchangePacket[]
+     */
+    private function readPackets(): array
+    {
+        $packets = [];
+
+        while (($packet = $this->inDequeue()) !== null) {
+            $packets[] = $packet;
+        }
+
+        return $packets;
+    }
+
+    /**
+     * @param ExchangePacket[] $packets
+     * @return ExchangePacket[]
+     */
+    private function processPackets(array $packets): array
+    {
+        $out = [];
+
+        foreach ($packets as $packet) {
+            switch ($packet->getId()) {
+                // TODO Packet ids
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param ExchangePacket[] $packets
+     */
+    private function pushPackets(array $packets): void
+    {
+        foreach ($packets as $packet) {
+            $this->outEnqueue($packet);
         }
     }
 

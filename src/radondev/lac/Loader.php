@@ -6,6 +6,7 @@ namespace radondev\lac;
 
 use pocketmine\plugin\PluginBase;
 use radondev\lac\commands\LACCommand;
+use radondev\lac\tasks\ExchangeTask;
 
 class Loader extends PluginBase
 {
@@ -32,6 +33,7 @@ class Loader extends PluginBase
         $this->getServer()->getCommandMap()->registerAll("lightanticheat", [
             new LACCommand($this->getDescription()->getAuthors(), $this->getDescription()->getVersion())
         ]);
+        $this->getScheduler()->scheduleRepeatingTask(new ExchangeTask(), 1);
     }
 
     /**
@@ -45,7 +47,7 @@ class Loader extends PluginBase
     /**
      * @return LightAntiCheat
      */
-    public function getLightAntiCheat(): LightAntiCheat
+    public function &getLightAntiCheat(): LightAntiCheat
     {
         return $this->lightAntiCheat;
     }
