@@ -11,3 +11,7 @@ jobs:
       uses: docker://oskarstark/phpstan-ga
       with:
         args: analyse src/
+    - name: Run PHPStan
+      uses: nxtlvlsoftware/pmmp-phpstan-action@3
+      with:
+        phpstan-config: phpstan.neon.dist
