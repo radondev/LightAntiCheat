@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace radondev\lac\tasks;
 
 use pocketmine\scheduler\Task;
