@@ -5,6 +5,8 @@
     <p>A threaded approach to MCPE anticheats with functionality and performance in mind.</p>
 </div>
 
+![PHPStan](https://github.com/radondev/LightAntiCheat/workflows/PHPStan/badge.svg?branch=master)
+
 ## Feature Overview
 
 - [ ] Full threaded environment
