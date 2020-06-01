@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace radondev\lac\threading;
 
-class ExchangePacket
+abstract class ExchangePacket
 {
     /**
      * @var int
      */
     private $id;
+    /**
+     * @var float
+     */
+    private $timeStamp;
 
     /**
      * ExchangePacket constructor.
@@ -18,6 +22,7 @@ class ExchangePacket
     public function __construct(int $id)
     {
         $this->id = $id;
+        $this->timeStamp = microtime(true);
     }
 
     /**
@@ -26,5 +31,13 @@ class ExchangePacket
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTimeStamp(): float
+    {
+        return $this->timeStamp;
     }
 }

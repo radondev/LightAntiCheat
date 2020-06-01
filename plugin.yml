@@ -1,10 +1,10 @@
 name: "LightAntiCheat"
 main: radondev\lac\Loader
 api: 3.0.0
-version: "0.1.0-dev"
+version: "0.2.0-dev"
 authors: ["radondev"]
 website: "https://github.com/radondev/LightAntiCheat"
-description: "TODO"
+description: "A threaded approach to MCPE anticheats with functionality and performance in mind"
 permissions:
   lac:
     default: op

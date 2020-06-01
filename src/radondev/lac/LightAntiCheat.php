@@ -131,7 +131,7 @@ class LightAntiCheat extends Thread
     }
 
     /**
-     * @return null|ExchangePacket
+     * @return ExchangePacket|null
      */
     public function inDequeue(): ?ExchangePacket
     {
