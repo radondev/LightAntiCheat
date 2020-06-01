@@ -31,7 +31,6 @@ use radondev\lac\threading\player\PlayerInteractEventPacket;
 use radondev\lac\threading\player\PlayerJoinEventPacket;
 use radondev\lac\threading\player\PlayerMoveEventPacket;
 use radondev\lac\threading\player\PlayerQuitEventPacket;
-use radondev\lac\users\UserManager;
 
 class EventListener implements Listener
 {
@@ -49,7 +48,6 @@ class EventListener implements Listener
      */
     public function __construct()
     {
-        $this->preJoinStorage = new UserManager();
         $this->exchangeTask = Loader::getInstance()->getExchangeTask();
     }
 
@@ -149,13 +147,7 @@ class EventListener implements Listener
         $packet = null;
         $entity = $event->getEntity();
 
-        if ($event instanceof EntityDamageEvent) { // Seems like a useless check, but allows a visually better structure and the ignorance of the other events
-            $packet = new EntityDamagedEventPacket(
-                $entity->getId(),
-                $entity,
-                $event->getCause()
-            );
-        } elseif ($event instanceof EntityDamageByEntityEvent) {
+        if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
 
             if ($damager instanceof Player) {
@@ -169,6 +161,12 @@ class EventListener implements Listener
                     $damager->getPitch()
                 );
             }
+        } else { // Seems like a useless check, but allows a visually better structure and the ignorance of the other events
+            $packet = new EntityDamagedEventPacket(
+                $entity->getId(),
+                $entity,
+                $event->getCause()
+            );
         }
 
         if ($packet instanceof ExchangePacket) {

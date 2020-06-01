@@ -27,7 +27,7 @@ class PlayerMoveEventPacket extends PlayerExchangePacket
      */
     private $pitch;
     /**
-     * @var float $level
+     * @var string $level
      */
     private $level;
     /**
@@ -42,10 +42,10 @@ class PlayerMoveEventPacket extends PlayerExchangePacket
      * @param Vector3 $to
      * @param float $yaw
      * @param float $pitch
-     * @param float $level
+     * @param string $level
      * @param float $currentFriction
      */
-    public function __construct(string $rawUuid, Vector3 $from, Vector3 $to, float $yaw, float $pitch, float $level, float $currentFriction)
+    public function __construct(string $rawUuid, Vector3 $from, Vector3 $to, float $yaw, float $pitch, string $level, float $currentFriction)
     {
         $this->from = $from;
         $this->to = $to;
@@ -122,17 +122,17 @@ class PlayerMoveEventPacket extends PlayerExchangePacket
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getLevel(): float
+    public function getLevel(): string
     {
         return $this->level;
     }
 
     /**
-     * @param float $level
+     * @param string $level
      */
-    public function setLevel(float $level): void
+    public function setLevel(string $level): void
     {
         $this->level = $level;
     }

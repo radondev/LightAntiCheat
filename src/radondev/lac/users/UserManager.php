@@ -54,8 +54,8 @@ class UserManager
      */
     public function getUser(string $rawUuid): ?User
     {
-        if (($user = $this->users[$rawUuid]) instanceof User) {
-            return $user;
+        if (isset($this->users[$rawUuid])) {
+            return $this->users[$rawUuid];
         }
 
         return null;
