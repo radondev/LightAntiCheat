@@ -6,7 +6,21 @@ namespace radondev\lac;
 
 use ClassLoader;
 use pocketmine\Thread;
+use radondev\lac\threading\block\BlockBreakEventPacket;
+use radondev\lac\threading\block\BlockPlaceEventPacket;
+use radondev\lac\threading\entity\EntityDamagedEventPacket;
+use radondev\lac\threading\entity\PlayerAttackEventPacket;
 use radondev\lac\threading\ExchangePacket;
+use radondev\lac\threading\Info;
+use radondev\lac\threading\player\InventoryTransactionEventPacket;
+use radondev\lac\threading\player\PlayerChatEventPacket;
+use radondev\lac\threading\player\PlayerEffectAddEventPacket;
+use radondev\lac\threading\player\PlayerEffectRemoveEventPacket;
+use radondev\lac\threading\player\PlayerJoinEventPacket;
+use radondev\lac\threading\player\PlayerMoveEventPacket;
+use radondev\lac\threading\player\PlayerQuitEventPacket;
+use radondev\lac\users\User;
+use radondev\lac\users\UserManager;
 use Threaded;
 use ThreadedLogger;
 
@@ -30,6 +44,10 @@ class LightAntiCheat extends Thread
      * @var bool
      */
     private $state;
+    /**
+     * @var UserManager
+     */
+    private $userManager;
 
     /**
      * LightAntiCheat constructor.
@@ -42,6 +60,7 @@ class LightAntiCheat extends Thread
         $this->inQueue = new Threaded();
         $this->outQueue = new Threaded();
         $this->state = true;
+        $this->userManager = new UserManager();
 
         $this->setClassLoader($classLoader);
         $this->start();
@@ -97,7 +116,65 @@ class LightAntiCheat extends Thread
 
         foreach ($packets as $packet) {
             switch ($packet->getId()) {
-                // TODO Packet ids
+                // TODO Finish packet classification
+
+                case Info::PLAYER_JOIN_EVENT_PACKET:
+                    if ($packet instanceof PlayerJoinEventPacket) {
+                        $user = new User($packet->getRawUUID());
+
+                        $this->userManager->registerUser($user);
+                    }
+                    break;
+                case Info::PLAYER_QUIT_EVENT_PACKET:
+                    if ($packet instanceof PlayerQuitEventPacket) {
+                        $this->userManager->unregisterUser($packet->getRawUUID());
+                    }
+                    break;
+                case Info::PLAYER_MOVE_EVENT_PACKET:
+                    if ($packet instanceof PlayerMoveEventPacket) {
+
+                    }
+                    break;
+                case Info::PLAYER_CHAT_EVENT_PACKET:
+                    if ($packet instanceof PlayerChatEventPacket) {
+
+                    }
+                    break;
+                case Info::PLAYER_ATTACK_EVENT_PACKET:
+                    if ($packet instanceof PlayerAttackEventPacket) {
+
+                    }
+                    break;
+                case Info::PLAYER_EFFECT_ADD_PACKET:
+                    if ($packet instanceof PlayerEffectAddEventPacket) {
+
+                    }
+                    break;
+                case Info::PLAYER_EFFECT_REMOVE_PACKET:
+                    if ($packet instanceof PlayerEffectRemoveEventPacket) {
+
+                    }
+                    break;
+                case Info::BLOCK_BREAK_EVENT_PACKET:
+                    if ($packet instanceof BlockBreakEventPacket) {
+
+                    }
+                    break;
+                case Info::BLOCK_PLACE_EVENT_PACKET:
+                    if ($packet instanceof BlockPlaceEventPacket) {
+
+                    }
+                    break;
+                case Info::ENTITY_DAMAGED_EVENT_PACKET:
+                    if ($packet instanceof EntityDamagedEventPacket) {
+
+                    }
+                    break;
+                case Info::INVENTORY_TRANSACTION_EVENT_PACKET:
+                    if ($packet instanceof InventoryTransactionEventPacket) {
+
+                    }
+                    break;
             }
         }
 

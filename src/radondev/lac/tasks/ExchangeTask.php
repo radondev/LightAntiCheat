@@ -8,6 +8,10 @@ use pocketmine\scheduler\Task;
 use radondev\lac\LightAntiCheat;
 use radondev\lac\Loader;
 use radondev\lac\threading\ExchangePacket;
+use radondev\lac\threading\Info;
+use radondev\lac\threading\player\PlayerViolationPacket;
+use radondev\lac\threading\server\ServerTpsUpdatePacket;
+use radondev\lac\utils\MessageBuilder;
 use SplQueue;
 
 class ExchangeTask extends Task
@@ -35,6 +39,11 @@ class ExchangeTask extends Task
      */
     public function onRun(int $currentTick): void
     {
+        // delimiter packet between two runs
+        $this->enqueue(
+            new ServerTpsUpdatePacket($currentTick, Loader::getInstance()->getServer()->getTicksPerSecondAverage())
+        );
+
         // push packets
         while (($packet = $this->dequeue()) !== null) {
             $this->lightAntiCheat->inEnqueue($packet);
@@ -42,7 +51,20 @@ class ExchangeTask extends Task
 
         // read packets
         while (($packet = Loader::getInstance()->getLightAntiCheat()->outDequeue()) !== null) {
-            // TODO Write to outQueue or pass packets on accordingly
+            switch ($packet->getId()) {
+                case Info::PLAYER_VIOLATION_PACKET:
+                    if ($packet instanceof PlayerViolationPacket) {
+                        // TODO Schedule kick task
+                    }
+                    break;
+                default:
+                    Loader::getInstance()->getLogger()->error(
+                        MessageBuilder::error("Scrapping received packet [id: %s]", [$packet->getId()])
+                    );
+                    Loader::getInstance()->getLogger()->error(
+                        MessageBuilder::error("Report this to the author(s)")
+                    );
+            }
         }
     }
 
