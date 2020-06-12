@@ -11,27 +11,35 @@ use radondev\lac\threading\PlayerExchangePacket;
 class PlayerMoveEventPacket extends PlayerExchangePacket
 {
     /**
-     * @var Vector3 $from
+     * @var Vector3
      */
     private $from;
     /**
-     * @var Vector3 $to
+     * @var Vector3
      */
     private $to;
     /**
-     * @var float $yaw
+     * @var float
      */
     private $yaw;
     /**
-     * @var float $pitch
+     * @var float
      */
     private $pitch;
     /**
-     * @var string $level
+     * @var Vector3
+     */
+    private $directionVector;
+    /**
+     * @var int[]
+     */
+    private $collidingBlocks;
+    /**
+     * @var string
      */
     private $level;
     /**
-     * @var float $currentFriction
+     * @var float
      */
     private $currentFriction;
 
@@ -42,15 +50,19 @@ class PlayerMoveEventPacket extends PlayerExchangePacket
      * @param Vector3 $to
      * @param float $yaw
      * @param float $pitch
+     * @param Vector3 $directionVector
+     * @param array $collidingBlocks
      * @param string $level
      * @param float $currentFriction
      */
-    public function __construct(string $rawUuid, Vector3 $from, Vector3 $to, float $yaw, float $pitch, string $level, float $currentFriction)
+    public function __construct(string $rawUuid, Vector3 $from, Vector3 $to, float $yaw, float $pitch, Vector3 $directionVector, array $collidingBlocks, string $level, float $currentFriction)
     {
-        $this->from = $from;
-        $this->to = $to;
+        $this->from = clone $from;
+        $this->to = clone $to;
         $this->yaw = $yaw;
         $this->pitch = $pitch;
+        $this->directionVector = clone $directionVector;
+        $this->collidingBlocks = $collidingBlocks;
         $this->level = $level;
         $this->currentFriction = $currentFriction;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace radondev\lac\listeners;
 
 use pocketmine\event\block\BlockBreakEvent;
@@ -8,9 +10,9 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityEffectAddEvent;
 use pocketmine\event\entity\EntityEffectRemoveEvent;
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -24,20 +26,21 @@ use radondev\lac\threading\block\BlockPlaceEventPacket;
 use radondev\lac\threading\entity\EntityDamagedEventPacket;
 use radondev\lac\threading\entity\PlayerAttackEventPacket;
 use radondev\lac\threading\ExchangePacket;
+use radondev\lac\threading\player\InventoryTransactionEventPacket;
 use radondev\lac\threading\player\PlayerChatEventPacket;
 use radondev\lac\threading\player\PlayerEffectAddEventPacket;
 use radondev\lac\threading\player\PlayerEffectRemoveEventPacket;
-use radondev\lac\threading\player\PlayerInteractEventPacket;
 use radondev\lac\threading\player\PlayerJoinEventPacket;
 use radondev\lac\threading\player\PlayerMoveEventPacket;
 use radondev\lac\threading\player\PlayerQuitEventPacket;
+use radondev\lac\utils\Blocks;
 
 class EventListener implements Listener
 {
     /**
      * @var array $preJoinStorage
      */
-    private $preJoinStorage; // TODO very primitive
+    private $preJoinStorage;
     /**
      * @var ExchangeTask
      */
@@ -53,6 +56,7 @@ class EventListener implements Listener
 
     /**
      * @param DataPacketReceiveEvent $event
+     * @priority lowest
      */
     public function onPacketReceive(DataPacketReceiveEvent $event): void
     {
@@ -65,6 +69,7 @@ class EventListener implements Listener
 
     /**
      * @param PlayerJoinEvent $event
+     * @priority lowest
      */
     public function onJoin(PlayerJoinEvent $event): void
     {
@@ -81,6 +86,7 @@ class EventListener implements Listener
 
     /**
      * @param PlayerQuitEvent $event
+     * @priority lowest
      */
     public function onQuit(PlayerQuitEvent $event): void
     {
@@ -91,10 +97,16 @@ class EventListener implements Listener
 
     /**
      * @param PlayerMoveEvent $event
+     * @priority lowest
      */
     public function onMove(PlayerMoveEvent $event): void
     {
         $player = $event->getPlayer();
+        $blocks = [];
+
+        foreach ($player->getLevel()->getCollisionBlocks($player->getBoundingBox()) as $block) {
+            $blocks[] = $block->getId();
+        }
 
         $packet = new PlayerMoveEventPacket(
             $player->getRawUniqueId(),
@@ -102,25 +114,10 @@ class EventListener implements Listener
             $event->getTo(),
             $player->getYaw(),
             $player->getPitch(),
+            $player->getDirectionVector(),
+            $blocks,
             $player->getLevel()->getFolderName(),
-            $player->getLevel()->getBlock($player->getPosition()->subtract(0, 1, 0))->getFrictionFactor() // TODO Move to utils
-        );
-
-        $this->exchangeTask->enqueue($packet);
-    }
-
-    /**
-     * @param PlayerInteractEvent $event
-     */
-    public function onInteract(PlayerInteractEvent $event): void
-    {
-        $packet = new PlayerInteractEventPacket(
-            $event->getPlayer()->getRawUniqueId(),
-            $event->getItem()->getId(),
-            $event->getAction(),
-            $event->getBlock()->getId(),
-            $event->getBlock(),
-            $event->getFace()
+            Blocks::getBlockBelow($player->getLevel(), $player)->getFrictionFactor()
         );
 
         $this->exchangeTask->enqueue($packet);
@@ -128,6 +125,7 @@ class EventListener implements Listener
 
     /**
      * @param PlayerChatEvent $event
+     * @priority lowest
      */
     public function onChat(PlayerChatEvent $event): void
     {
@@ -141,6 +139,7 @@ class EventListener implements Listener
 
     /**
      * @param EntityDamageEvent $event
+     * @priority lowest
      */
     public function onEntityDamage(EntityDamageEvent $event): void
     {
@@ -176,6 +175,7 @@ class EventListener implements Listener
 
     /**
      * @param EntityEffectAddEvent $event
+     * @priority lowest
      */
     public function onEffectAdd(EntityEffectAddEvent $event): void
     {
@@ -194,6 +194,7 @@ class EventListener implements Listener
 
     /**
      * @param EntityEffectRemoveEvent $event
+     * @priority lowest
      */
     public function onEffectRemove(EntityEffectRemoveEvent $event): void
     {
@@ -211,6 +212,7 @@ class EventListener implements Listener
 
     /**
      * @param BlockBreakEvent $event
+     * @priority lowest
      */
     public function onBlockBreak(BlockBreakEvent $event): void
     {
@@ -225,6 +227,7 @@ class EventListener implements Listener
 
     /**
      * @param BlockPlaceEvent $event
+     * @priority lowest
      */
     public function onBlockPlace(BlockPlaceEvent $event): void
     {
@@ -232,6 +235,20 @@ class EventListener implements Listener
             $event->getPlayer()->getRawUniqueId(),
             $event->getBlock(),
             $event->getBlock()->getId()
+        );
+
+        $this->exchangeTask->enqueue($packet);
+    }
+
+    /**
+     * @param InventoryTransactionEvent $event
+     * @priority lowest
+     */
+    public function onInventoryTransaction(InventoryTransactionEvent $event): void
+    {
+        $packet = new InventoryTransactionEventPacket(
+            $event->getTransaction()->getSource()->getRawUniqueId(),
+            $event->getTransaction()->getActions(),
         );
 
         $this->exchangeTask->enqueue($packet);

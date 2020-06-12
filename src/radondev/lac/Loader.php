@@ -8,6 +8,7 @@ use pocketmine\plugin\PluginBase;
 use radondev\lac\commands\LACCommand;
 use radondev\lac\listeners\EventListener;
 use radondev\lac\tasks\ExchangeTask;
+use radondev\lac\threading\server\ServerShareConfigPacket;
 
 class Loader extends PluginBase
 {
@@ -43,12 +44,22 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(
             new EventListener(), $this
         );
+        $this->sendInitializingPackets();
+    }
+
+    private function sendInitializingPackets(): void
+    {
+        $this->exchangeTask->enqueue(
+            new ServerShareConfigPacket(
+                $this->getConfig()->getAll()
+            )
+        );
     }
 
     /**
      * @return Loader
      */
-    public static function getInstance(): Loader
+    public static function &getInstance(): Loader
     {
         return self::$instance;
     }

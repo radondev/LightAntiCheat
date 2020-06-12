@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace radondev\lac\users;
 
 class UserManager
@@ -37,14 +39,12 @@ class UserManager
     }
 
     /**
-     * @param User $user
+     * @param string $rawUuid
      */
-    public function unregisterUser(User $user): void
+    public function unregisterUser(string $rawUuid): void
     {
-        $uuid = $user->getRawUuid();
-
-        if (isset($this->users[$uuid])) {
-            unset($this->users[$uuid]);
+        if (isset($this->users[$rawUuid])) {
+            unset($this->users[$rawUuid]);
         }
     }
 
