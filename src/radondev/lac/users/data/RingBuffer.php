@@ -18,39 +18,27 @@ abstract class RingBuffer
      * @var array
      */
     protected $objects;
-    /**
-     * @var object
-     */
-    protected $baseObject;
 
     /**
      * RingBuffer constructor.
      * @param int $size
-     * @param $baseObject
      */
-    public function __construct(int $size, $baseObject)
+    public function __construct(int $size)
     {
         $this->size = $size;
         $this->currentPosition = 0;
         $this->objects = array_fill(0, $size, null);
-        $this->baseObject = $baseObject;
     }
 
     /**
      * Returns false, if $object is not an instance of $baseObject
-     * @param $object
-     * @return bool
+     * @param mixed $object
      */
-    public function add($object): bool
+    protected function add($object): void
     {
-        if ($object instanceof $this->baseObject) {
-            $this->objects[$this->currentPosition] = $object;
+        $this->objects[$this->currentPosition] = $object;
 
-            $this->rearrangeCurrentPosition();
-
-            return true;
-        }
-        return false;
+        $this->rearrangeCurrentPosition();
     }
 
     /**

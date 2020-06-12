@@ -14,7 +14,17 @@ class MovementRingBuffer extends RingBuffer
      */
     public function __construct(int $size)
     {
-        parent::__construct($size, new PlayerMoveEventPacket("", null, null, 0, 0, null, [], "", 0));
+        parent::__construct($size);
+    }
+
+    /**
+     * @param PlayerMoveEventPacket $packet
+     */
+    public function add($packet): void
+    {
+        if ($packet instanceof PlayerMoveEventPacket) {
+            parent::add($packet);
+        }
     }
 
     /**
