@@ -16,7 +16,7 @@ class PunishmentTask extends Task
     private $punishmentTask;
 
     /**
-     * @var PlayerViolationPacket
+     * @var PlayerViolationPacket[]
      */
     private $players;
 
@@ -33,7 +33,7 @@ class PunishmentTask extends Task
      */
     public function onRun(int $currentTick): void
     {
-        foreach ($this->players as $playerName) {
+        foreach ($this->players as $playerName => $packet) {
             // TODO punishments from config
         }
     }
