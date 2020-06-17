@@ -51,7 +51,7 @@ class PunishmentTask extends Task
      */
     public function add(PlayerViolationPacket $packet): void
     {
-        $this->players[$packet->getId()] = $packet; // TODO string is not a valid key :shrug:
+        $this->players[] = $packet;
 
         //  {
         //    "player" => {
