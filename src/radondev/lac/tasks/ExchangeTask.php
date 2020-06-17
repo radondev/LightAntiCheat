@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace radondev\lac\tasks;
 
 use pocketmine\scheduler\Task;
+use pocketmine\Server;
 use radondev\lac\LightAntiCheat;
 use radondev\lac\Loader;
 use radondev\lac\threading\ExchangePacket;
@@ -17,9 +18,17 @@ use SplQueue;
 class ExchangeTask extends Task
 {
     /**
+     * @var Server
+     */
+    private $server;
+    /**
      * @var LightAntiCheat
      */
     private $lightAntiCheat;
+    /**
+     * @var PunishmentTask
+     */
+    private $punishmentTask;
     /**
      * @var SplQueue
      */
@@ -30,7 +39,9 @@ class ExchangeTask extends Task
      */
     public function __construct()
     {
+        $this->server = Loader::getInstance()->getServer();
         $this->lightAntiCheat = Loader::getInstance()->getLightAntiCheat();
+        $this->punishmentTask = Loader::getInstance()->getPunishmentTask();
         $this->inQueue = new SplQueue();
     }
 
@@ -54,7 +65,9 @@ class ExchangeTask extends Task
             switch ($packet->getId()) {
                 case Info::PLAYER_VIOLATION_PACKET:
                     if ($packet instanceof PlayerViolationPacket) {
-                        // TODO Schedule kick task
+                        $name = $this->server->getPlayerByRawUUID($packet->getRawUUID())->getName();
+
+                        $this->punishmentTask->add($name, $packet);
                     }
                     break;
                 default:

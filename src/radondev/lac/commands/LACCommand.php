@@ -44,12 +44,14 @@ class LACCommand extends Command implements PluginIdentifiableCommand
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        $sender->sendMessage(
-            MessageBuilder::info("LightAntiCheat v%s made by %s", [
-                $this->version,
-                $this->plainAuthors
-            ])
-        );
+        if ($sender->hasPermission("lac.command")) {
+            $sender->sendMessage(
+                MessageBuilder::info("LightAntiCheat v%s made by %s", [
+                    $this->version,
+                    $this->plainAuthors
+                ])
+            );
+        }
         return true;
     }
 
