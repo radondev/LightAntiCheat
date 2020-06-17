@@ -17,6 +17,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\level\Level;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\Player;
 use radondev\lac\Loader;
@@ -104,23 +105,25 @@ class EventListener implements Listener
         $player = $event->getPlayer();
         $blocks = [];
 
-        foreach ($player->getLevel()->getCollisionBlocks($player->getBoundingBox()) as $block) {
-            $blocks[] = $block->getId();
+        if ($player->getLevel() instanceof Level) {
+            foreach ($player->getLevel()->getCollisionBlocks($player->getBoundingBox()) as $block) {
+                $blocks[] = $block->getId();
+            }
+
+            $packet = new PlayerMoveEventPacket(
+                $player->getRawUniqueId(),
+                $event->getFrom(),
+                $event->getTo(),
+                $player->getYaw(),
+                $player->getPitch(),
+                $player->getDirectionVector(),
+                $blocks,
+                $player->getLevel()->getFolderName(),
+                Blocks::getBlockBelow($player->getLevel(), $player)->getFrictionFactor()
+            );
+
+            $this->exchangeTask->enqueue($packet);
         }
-
-        $packet = new PlayerMoveEventPacket(
-            $player->getRawUniqueId(),
-            $event->getFrom(),
-            $event->getTo(),
-            $player->getYaw(),
-            $player->getPitch(),
-            $player->getDirectionVector(),
-            $blocks,
-            $player->getLevel()->getFolderName(),
-            Blocks::getBlockBelow($player->getLevel(), $player)->getFrictionFactor()
-        );
-
-        $this->exchangeTask->enqueue($packet);
     }
 
     /**

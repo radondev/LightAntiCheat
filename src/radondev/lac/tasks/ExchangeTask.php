@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace radondev\lac\tasks;
 
+use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
 use radondev\lac\LightAntiCheat;
@@ -65,9 +66,11 @@ class ExchangeTask extends Task
             switch ($packet->getId()) {
                 case Info::PLAYER_VIOLATION_PACKET:
                     if ($packet instanceof PlayerViolationPacket) {
-                        $name = $this->server->getPlayerByRawUUID($packet->getRawUUID())->getName();
+                        if (($player = $this->server->getPlayerByRawUUID($packet->getRawUUID())) instanceof Player) {
+                            $name = $player->getName();
 
-                        $this->punishmentTask->add($name, $packet);
+                            $this->punishmentTask->add($name, $packet);
+                        }
                     }
                     break;
                 default:
