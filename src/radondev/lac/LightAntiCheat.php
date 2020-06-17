@@ -116,7 +116,7 @@ class LightAntiCheat extends Thread
 
         foreach ($packets as $packet) {
             switch ($packet->getId()) {
-                // TODO Finish packet classification
+                // TODO Finish packet classification in v0.3 (introducing checks)
 
                 case Info::PLAYER_JOIN_EVENT_PACKET:
                     if ($packet instanceof PlayerJoinEventPacket) {
