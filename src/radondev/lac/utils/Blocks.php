@@ -33,16 +33,19 @@ class Blocks
 
         $level = $position->getLevel();
         $blocks = array();
-        $directions = array(
-            "x1" => ($position->x > floor($position->x) + 0.5) ? 0 : 1,
-            "x2" => ($position->x < floor($position->x) + 0.5) ? 1 : 2,
-            "z1" => ($position->z > floor($position->z) + 0.5) ? 0 : 1,
-            "z2" => ($position->z < floor($position->z) + 0.5) ? 1 : 2
-        );
 
-        for ($x = $position->x - $directions["x1"]; $x < $position->x + $directions["x2"]; $x++) {
-            for ($z = $position->z - $directions["z1"]; $z < $position->z + $directions["z2"]; $z++) {
-                $blocks[] = self::getBlockBelow($level, new Vector3($x, $position->getY(), $z));
+        if ($level instanceof Level) {
+            $directions = array(
+                "x1" => ($position->getX() > floor($position->getX()) + 0.5) ? 0 : 1,
+                "x2" => ($position->getX() < floor($position->getX()) + 0.5) ? 1 : 2,
+                "z1" => ($position->getZ() > floor($position->getZ()) + 0.5) ? 0 : 1,
+                "z2" => ($position->getZ() < floor($position->getZ()) + 0.5) ? 1 : 2
+            );
+
+            for ($x = $position->x - $directions["x1"]; $x < $position->x + $directions["x2"]; $x++) {
+                for ($z = $position->z - $directions["z1"]; $z < $position->z + $directions["z2"]; $z++) {
+                    $blocks[] = self::getBlockBelow($level, new Vector3($x, $position->getY(), $z));
+                }
             }
         }
 

@@ -66,11 +66,7 @@ class ExchangeTask extends Task
             switch ($packet->getId()) {
                 case Info::PLAYER_VIOLATION_PACKET:
                     if ($packet instanceof PlayerViolationPacket) {
-                        if (($player = $this->server->getPlayerByRawUUID($packet->getRawUUID())) instanceof Player) {
-                            $name = $player->getName();
-
-                            $this->punishmentTask->add($name, $packet);
-                        }
+                            $this->punishmentTask->add($packet);
                     }
                     break;
                 default:

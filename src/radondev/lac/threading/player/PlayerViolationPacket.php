@@ -18,6 +18,10 @@ class PlayerViolationPacket extends PlayerExchangePacket
      */
     private $action;
     /**
+     * @var int
+     */
+    private $flags;
+    /**
      * @var float
      */
     private $violation;
@@ -29,9 +33,20 @@ class PlayerViolationPacket extends PlayerExchangePacket
     /**
      * PlayerViolationPacket constructor.
      * @param string $rawUuid
+     * @param int $punishment
+     * @param int $action
+     * @param int $flags
+     * @param float $violation
+     * @param float $relativeViolation
      */
-    public function __construct(string $rawUuid)
+    public function __construct(string $rawUuid, int $punishment, int $action, int $flags, float $violation, float $relativeViolation)
     {
+        $this->punishment = $punishment;
+        $this->action = $action;
+        $this->flags = $flags;
+        $this->violation = $violation;
+        $this->relativeViolation = $relativeViolation;
+
         parent::__construct(Info::PLAYER_VIOLATION_PACKET, $rawUuid);
     }
 
@@ -65,6 +80,22 @@ class PlayerViolationPacket extends PlayerExchangePacket
     public function setAction(int $action): void
     {
         $this->action = $action;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFlags(): int
+    {
+        return $this->flags;
+    }
+
+    /**
+     * @param int $flags
+     */
+    public function setFlags(int $flags): void
+    {
+        $this->flags = $flags;
     }
 
     /**
